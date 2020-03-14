@@ -1,47 +1,47 @@
 GEO_ID,NAME,MEAN_INCOME
-45001,"Abbeville County, South Carolina",51486
-45003,"Aiken County, South Carolina",66713
-45005,"Allendale County, South Carolina",38401
-45007,"Anderson County, South Carolina",64057
-45009,"Bamberg County, South Carolina",47509
-45011,"Barnwell County, South Carolina",48742
-45013,"Beaufort County, South Carolina",88376
-45015,"Berkeley County, South Carolina",75504
-45017,"Calhoun County, South Carolina",60797
-45019,"Charleston County, South Carolina",90593
-45021,"Cherokee County, South Carolina",52714
-45023,"Chester County, South Carolina",51811
-45025,"Chesterfield County, South Carolina",51767
-45027,"Clarendon County, South Carolina",52668
-45029,"Colleton County, South Carolina",51053
-45031,"Darlington County, South Carolina",52907
-45033,"Dillon County, South Carolina",43942
-45035,"Dorchester County, South Carolina",76701
-45037,"Edgefield County, South Carolina",69741
-45039,"Fairfield County, South Carolina",54010
-45041,"Florence County, South Carolina",64233
-45043,"Georgetown County, South Carolina",71010
-45045,"Greenville County, South Carolina",78229
-45047,"Greenwood County, South Carolina",58679
-45049,"Hampton County, South Carolina",43009
-45051,"Horry County, South Carolina",63661
-45053,"Jasper County, South Carolina",58336
-45055,"Kershaw County, South Carolina",60728
-45057,"Lancaster County, South Carolina",76139
-45059,"Laurens County, South Carolina",55273
-45061,"Lee County, South Carolina",45875
-45063,"Lexington County, South Carolina",76343
-45065,"McCormick County, South Carolina",57950
-45067,"Marion County, South Carolina",50693
-45069,"Marlboro County, South Carolina",45307
-45071,"Newberry County, South Carolina",57692
-45073,"Oconee County, South Carolina",66461
-45075,"Orangeburg County, South Carolina",49429
-45077,"Pickens County, South Carolina",62857
-45079,"Richland County, South Carolina",73371
-45081,"Saluda County, South Carolina",58014
-45083,"Spartanburg County, South Carolina",66705
-45085,"Sumter County, South Carolina",56757
-45087,"Union County, South Carolina",52916
-45089,"Williamsburg County, South Carolina",46239
-45091,"York County, South Carolina",83339
+45001,Abbeville County,51486
+45003,Aiken County,66713
+45005,Allendale County,38401
+45007,Anderson County,64057
+45009,Bamberg County,47509
+45011,Barnwell County,48742
+45013,Beaufort County,88376
+45015,Berkeley County,75504
+45017,Calhoun County,60797
+45019,Charleston County,90593
+45021,Cherokee County,52714
+45023,Chester County,51811
+45025,Chesterfield County,51767
+45027,Clarendon County,52668
+45029,Colleton County,51053
+45031,Darlington County,52907
+45033,Dillon County,43942
+45035,Dorchester County,76701
+45037,Edgefield County,69741
+45039,Fairfield County,54010
+45041,Florence County,64233
+45043,Georgetown County,71010
+45045,Greenville County,78229
+45047,Greenwood County,58679
+45049,Hampton County,43009
+45051,Horry County,63661
+45053,Jasper County,58336
+45055,Kershaw County,60728
+45057,Lancaster County,76139
+45059,Laurens County,55273
+45061,Lee County,45875
+45063,Lexington County,76343
+45065,McCormick County,57950
+45067,Marion County,50693
+45069,Marlboro County,45307
+45071,Newberry County,57692
+45073,Oconee County,66461
+45075,Orangeburg County,49429
+45077,Pickens County,62857
+45079,Richland County,73371
+45081,Saluda County,58014
+45083,Spartanburg County,66705
+45085,"Sumter County,",56757
+45087,Union County,52916
+45089,Williamsburg County,46239
+45091,York County,83339
