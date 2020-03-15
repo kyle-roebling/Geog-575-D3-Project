@@ -16,12 +16,16 @@ window.onload = setMap();
 //set up choropleth map
 function setMap(){
 
-    //use queue to parallelize asynchronous data loading
-    d3.queue()
-        .defer(d3.csv, "data/SouthCarolina_Data.csv") //load attributes from csv
-        //.defer(d3.json, "data/SouthCarolina_Counties.topojson") //load choropleth spatial data
-        .await(callback);
+    Promise.all([
+          d3.csv("/data/SouthCarolina_Data.csv"),
+          d3.json("/data/SouthCarolina_Counties.json")
+        ]).then(function(d) {
+            data = d[0];
+            counties = topojson.feature(d[1],d[1].objects.SouthCarolina_Counties).features;
+            console.log(data);
+            console.log(counties);
+      
+        });
 
 
 };
-
