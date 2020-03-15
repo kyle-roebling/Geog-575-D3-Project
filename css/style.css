@@ -1,3 +1,5 @@
-#mapid{
-    height: 180px;
+.counties {
+    fill: Blue;
+    stroke: #CCC;
+    stroke-width: 2px;
 }
