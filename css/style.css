@@ -1,3 +1,7 @@
+.map {
+    border: medium solid #999;
+}
+
 .counties {
     fill: Blue;
     stroke: #CCC;
