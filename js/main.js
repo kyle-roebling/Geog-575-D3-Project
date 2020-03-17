@@ -48,9 +48,43 @@ function setMap(){
             dataset = data[0];
             //Convert topojson into geojson format
             counties = topojson.feature(data[1],data[1].objects.SouthCarolina_Counties).features;
-            console.log(dataset);
-            console.log(counties);
+            
+            //Join the csv file to the geojson file
+            //variables for data join
+            var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
         
+           
+            //loop through csv to assign each set of csv attribute values to geojson region
+            for (var i=0; i < dataset.length; i++){
+                var csvCounty = dataset[i]; //the current region
+                var csvKey = csvCounty.GEO_ID; //the CSV primary key
+
+                //loop through geojson regions to find correct region
+                for (var a=0; a < counties.length; a++){
+                    var geojsonProps = counties[a].properties; //the current region geojson properties
+                    var geojsonKey = geojsonProps.FIPS; //the geojson primary key
+
+                    //where primary keys match, transfer csv data to geojson properties object
+                    if (geojsonKey == csvKey){
+
+                        //assign all attributes and values
+                        attrArray.forEach(function(attr){
+                            if (attr === "NAME"){
+                                var val = csvCounty[attr];
+                                geojsonProps[attr] = val; //assign attribute and value to geojson properties
+                            }else {
+                                var val = parseFloat(csvCounty[attr]); //get csv attribute value
+                                geojsonProps[attr] = val; //assign attribute and value to geojson properties
+                            }
+                            
+                            
+                        });
+                    };
+                };
+                            
+            };
+        
+            
             //add South Carolina Counites to map
             var regions = map.selectAll(".SouthCarolina_Counties")
                 .data(counties)
@@ -60,8 +94,11 @@ function setMap(){
                     return "counties " + d.properties.FIPS;
                 })
                 .attr("d", path);
+        
+        console.log(counties);
 
         });
 
+    
 
 };
