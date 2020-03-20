@@ -24,7 +24,7 @@ window.onload = setMap();
 function setMap(){
     
     //map frame dimensions
-    var width = 960,
+    var width = window.innerWidth * 0.5,
         height = 460;
     
     //create new svg container for the map
@@ -52,20 +52,27 @@ function setMap(){
           d3.csv("/data/SouthCarolina_Data.csv"),
           d3.json("/data/SouthCarolina_Counties.json")
         ]).then(function(data) {
+        
+            //csv data
+            csvData = data[0];
             
+            //join csv data to geojson
             counties = joinData(data);
         
             //create the color scale
             var colorScale = makeColorScale(data[0]);
         
+            //create map
             addCounties(counties,map,path,colorScale);
-    
+        
+            //create chart
+            setChart(csvData, colorScale);
+        
+        
         
         console.log(counties);
 
         });
-
-    
 
 };// End of set map function
    
@@ -78,9 +85,7 @@ function joinData(data){
             
             //Join the csv file to the geojson file
             //variables for data join
-
-        
-           
+    
             //loop through csv to assign each set of csv attribute values to geojson region
             for (var i=0; i < dataset.length; i++){
                 var csvCounty = dataset[i]; //the current region
@@ -156,6 +161,21 @@ for (var i=0; i<data.length; i++){
 colorScale.domain(domainArray);
 
 return colorScale;
+};
+    
+//function to create coordinated bar chart
+function setChart(csvData, colorScale){
+    
+    //chart frame dimensions
+    var chartWidth = window.innerWidth * 0.425,
+        chartHeight = 460;
+    
+    //create a second svg element to hold the bar chart
+    var chart = d3.select("body")
+        .append("svg")
+        .attr("width", chartWidth)
+        .attr("height", chartHeight)
+        .attr("class", "chart");
 };
     
     
