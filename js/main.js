@@ -14,7 +14,7 @@ base.
 //pseudo-global variables
 var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
 var expressedArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
-var expressed = expressedArray[0]; //initial attribute
+var expressed = expressedArray[7]; //initial attribute
 
 
 //begin script when window loads
@@ -134,11 +134,11 @@ function addCounties(counties,map,path,colorScale){
 
 function makeColorScale(data){
     var colorClasses = [
-        "#D4B9DA",
-        "#C994C7",
-        "#DF65B0",
-        "#DD1C77",
-        "#980043"
+        "#eff3ff",
+        "#bdd7e7",
+        "#6baed6",
+        "#3182bd",
+        "#08519c"
     ];
     
 //create color scale generator
