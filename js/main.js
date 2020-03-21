@@ -14,7 +14,7 @@ base.
 //pseudo-global variables
 var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
 var expressedArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
-var expressed = expressedArray[7]; //initial attribute
+var expressed = expressedArray[0]; //initial attribute
 
 
 //begin script when window loads
@@ -25,7 +25,7 @@ function setMap(){
     
     //map frame dimensions
     var width = window.innerWidth * 0.5,
-        height = 460;
+        height = 400;
     
     //create new svg container for the map
     var map = d3.select("body")
@@ -39,7 +39,7 @@ function setMap(){
         .center([0, 33.83])
         .rotate([81.16, 0, 0])
         .parallels([43, 62])
-        .scale(5000)
+        .scale(6000)
         .translate([width / 2, height / 2]);
     
     // create projection path generator
@@ -55,7 +55,7 @@ function setMap(){
         
             //csv data
             csvData = data[0];
-            
+        
             //join csv data to geojson
             counties = joinData(data);
         
@@ -70,7 +70,7 @@ function setMap(){
         
         
         
-        console.log(counties);
+        //console.log(counties);
 
         });
 
@@ -168,7 +168,11 @@ function setChart(csvData, colorScale){
     
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 460;
+        chartHeight = 400;
+     
+    var yScale = d3.scaleLinear()
+        .range([0, chartHeight])
+        .domain([0, 100]);
     
     //create a second svg element to hold the bar chart
     var chart = d3.select("body")
@@ -176,6 +180,26 @@ function setChart(csvData, colorScale){
         .attr("width", chartWidth)
         .attr("height", chartHeight)
         .attr("class", "chart");
+    
+    //set bars for each province
+    var bars = chart.selectAll(".bars")
+        .data(csvData)
+        .enter()
+        .append("rect")
+        .attr("class", function(d){
+            return "bars " + d.GEO_ID;
+        })
+        .attr("width", chartWidth / csvData.length - 1)
+        .attr("x", function(d, i){
+            return i * (chartWidth / csvData.length);
+        })
+        .attr("height", function(d){
+            return yScale(parseFloat(d[expressed]));
+        })
+        .attr("y", function(d){
+            return chartHeight - yScale(parseFloat(d[expressed]));
+        })
+        .style("fill", 'blue');
 };
     
     
