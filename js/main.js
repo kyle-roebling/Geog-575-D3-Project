@@ -14,7 +14,7 @@ base.
 //pseudo-global variables
 var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
 var expressedArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
-var expressed = expressedArray[0]; //initial attribute
+var expressed = expressedArray[4]; //initial attribute
 
 
 //begin script when window loads
@@ -24,7 +24,7 @@ window.onload = setMap();
 function setMap(){
     
     //map frame dimensions
-    var width = window.innerWidth * 0.5,
+    var width = window.innerWidth * 0.40,
         height = 400;
     
     //create new svg container for the map
@@ -135,9 +135,10 @@ function addCounties(counties,map,path,colorScale){
             });
 };
     
-//Function to create the color scale for the choropleth
-
+//Function to create the color scale for the choropleth map
+    
 function makeColorScale(data){
+    
     var colorClasses = [
         "#eff3ff",
         "#bdd7e7",
@@ -159,47 +160,92 @@ for (var i=0; i<data.length; i++){
 
 //assign array of expressed values as scale domain
 colorScale.domain(domainArray);
-
+    
 return colorScale;
 };
     
+
 //function to create coordinated bar chart
 function setChart(csvData, colorScale){
-    
-    //chart frame dimensions
-    var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 400;
+     //chart frame dimensions
+     var chartWidth = window.innerWidth * 0.55,
+        chartHeight = 400,
+        leftPadding = 25,
+        rightPadding = 2,
+        topBottomPadding = 5,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
+        translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
      
-    var yScale = d3.scaleLinear()
-        .range([0, chartHeight])
-        .domain([0, 100]);
-    
-    //create a second svg element to hold the bar chart
+  //create a second svg element to hold the bar chart
     var chart = d3.select("body")
         .append("svg")
         .attr("width", chartWidth)
         .attr("height", chartHeight)
         .attr("class", "chart");
     
+    //create a rectangle for chart background fill
+    var chartBackground = chart.append("rect")
+        .attr("class", "chartBackground")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+    
+   //create a scale to size bars proportionally to frame and for axis
+    var yScale = d3.scaleLinear()
+        .range([390, 0])
+        .domain([0, 100]);
+    
+    
     //set bars for each province
     var bars = chart.selectAll(".bars")
         .data(csvData)
         .enter()
         .append("rect")
+        .sort(function(a, b){
+            return b[expressed]-a[expressed]
+        })
         .attr("class", function(d){
             return "bars " + d.GEO_ID;
         })
-        .attr("width", chartWidth / csvData.length - 1)
+        .attr("width", chartInnerWidth / csvData.length - 1)
         .attr("x", function(d, i){
-            return i * (chartWidth / csvData.length);
+            return i * (chartInnerWidth / csvData.length) + leftPadding;
         })
         .attr("height", function(d){
-            return yScale(parseFloat(d[expressed]));
+            return 390 - yScale(parseFloat(d[expressed]));
         })
         .attr("y", function(d){
-            return chartHeight - yScale(parseFloat(d[expressed]));
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
         })
-        .style("fill", 'blue');
+        .style("fill", function(d){
+            return colorScale(d[expressed]);
+            });
+
+    //below Example 2.8...create a text element for the chart title
+    var chartTitle = chart.append("text")
+        .attr("x", 40)
+        .attr("y", 40)
+        .attr("class", "chartTitle")
+        .text(expressed);
+    
+    //create vertical axis generator
+    var yAxis = d3.axisLeft()
+        .scale(yScale)
+
+    //place axis
+    var axis = chart.append("g")
+        .attr("class", "axis")
+        .attr("transform", translate)
+        .call(yAxis);
+
+    //create frame for chart border
+    var chartFrame = chart.append("rect")
+        .attr("class", "chartFrame")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+
 };
     
     
