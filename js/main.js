@@ -68,6 +68,9 @@ function setMap(){
             //create chart
             setChart(csvData, colorScale);
         
+            //create dropdown
+            createDropdown();
+        
         
         
         //console.log(counties);
@@ -247,6 +250,28 @@ function setChart(csvData, colorScale){
         .attr("transform", translate);
 
 };
+    
+//Function to create dropdown menu for attribute selection
+function createDropdown(){
+    //add select element
+    var dropdown = d3.select("body")
+        .append("select")
+        .attr("class", "dropdown");
+    
+    //add initial option
+    var titleOption = dropdown.append("option")
+        .attr("class", "titleOption")
+        .attr("disabled", "true")
+        .text("Select Attribute")
+    
+    //add attribute name options
+    var attrOptions = dropdown.selectAll("attrOptions")
+        .data(expressedArray)
+        .enter()
+        .append("option")
+        .attr("value", function(d) {return d})
+        .text(function(d){return d});
+}
     
     
     
