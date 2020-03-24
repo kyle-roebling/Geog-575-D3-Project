@@ -65,8 +65,8 @@ function setMap(){
     
     // Download csv dataset and json counties for South Carolina
     Promise.all([
-          d3.csv("/data/SouthCarolina_Data.csv"),
-          d3.json("/data/SouthCarolina_Counties.json")
+          d3.csv("./data/SouthCarolina_Data.csv"),
+          d3.json("./data/SouthCarolina_Counties.json")
         ]).then(function(data) {
         
             //csv data
