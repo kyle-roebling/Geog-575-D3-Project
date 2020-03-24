@@ -280,6 +280,8 @@ function changeAttribute(attribute, csvData){
     
     //recolor enumeration units
     var regions = d3.selectAll(".counties")
+        .transition()
+        .duration(1000)
         .style("fill", function(d){
             return colorScale(d.properties[expressed]);
             });
@@ -290,6 +292,11 @@ function changeAttribute(attribute, csvData){
         .sort(function(a,b){
              return b[expressed] - a[expressed];
         })
+        .transition()
+        .delay(function(d,i){
+            return i * 20
+        })
+        .duration(500);
     
     //call update chart function
     updateChart(bars,csvData.length,colorScale);
