@@ -15,7 +15,7 @@ base.
 var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
 
 var expressedArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
-var expressed = expressedArray[4]; //initial attribute
+var expressed = expressedArray[0]; //initial attribute
     
 //chart frame dimensions
 var chartWidth = window.innerWidth * 0.55,
@@ -285,7 +285,7 @@ function changeAttribute(attribute, csvData){
             });
     
     //re-sort, resize, recolor bars
-    var bars = d3.selectAll(".bar")
+    var bars = d3.selectAll(".bars")
         //re-sort bars
         .sort(function(a,b){
              return b[expressed] - a[expressed];
@@ -298,7 +298,7 @@ function changeAttribute(attribute, csvData){
 //Function to update chart data
 function updateChart(bars,n,colorScale){
     bars.attr("x", function(d, i){
-        return i * (chartInnerWidth / csvData.length) + leftPadding;
+        return i * (chartInnerWidth / n) + leftPadding;
     })
         .attr("height", function(d){
             return 390 - yScale(parseFloat(d[expressed]));
@@ -309,6 +309,8 @@ function updateChart(bars,n,colorScale){
         .style("fill", function(d){
             return colorScale(d[expressed]);
             });
+       var chartTitle = d3.select(".chartTitle")
+        .text(expressed);
 };
     
 
