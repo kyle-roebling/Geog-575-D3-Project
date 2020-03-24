@@ -146,11 +146,14 @@ function addCounties(counties,map,path,colorScale){
             .enter()
             .append("path")
             .attr("class", function(d){
-                return "counties " + d.properties.FIPS;
+                return "counties" + d.properties.FIPS;
             })
             .attr("d", path)
             .style("fill", function(d){
             return colorScale(d.properties[expressed]);
+            })
+            .on("mouseover", function(d){
+                highlight(d.properties);
             });
 };
     
@@ -214,6 +217,7 @@ function setChart(csvData, colorScale){
             return "bars " + d.GEO_ID;
         })
         .attr("width", chartInnerWidth / csvData.length - 1)
+        .on("mouseover", highlight);
     
     //call update chart function
     updateChart(bars,csvData.length,colorScale);
@@ -318,6 +322,15 @@ function updateChart(bars,n,colorScale){
             });
        var chartTitle = d3.select(".chartTitle")
         .text(expressed);
+};
+    
+//function to highlight enumeration units and bars
+function highlight(props){
+    console.log(".counties" + props.FIPS);
+    //change stroke
+    var selected = d3.selectAll(".counties" + props.FIPS)
+        .style("stroke", "yellow")
+        .style("stroke-width", "2");
 };
     
 
