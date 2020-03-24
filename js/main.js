@@ -154,7 +154,13 @@ function addCounties(counties,map,path,colorScale){
             })
             .on("mouseover", function(d){
                 highlight(".counties" + d.properties.FIPS);
-            });
+            })
+            .on("mouseout", function(d){
+                dehighlighted(".counties" + d.properties.FIPS);
+            })
+        
+        var desc = regions.append("desc")
+            .text('{"stroke": "#CCC", "stroke-width": "0.5px"}');
 };
     
 //Function to create the color scale for the choropleth map
@@ -219,7 +225,14 @@ function setChart(csvData, colorScale){
         .attr("width", chartInnerWidth / csvData.length - 1)
         .on("mouseover", function(d){
             highlight(".bars" + d.GEO_ID)
-        });
+        })
+        .on("mouseout", function(d){
+                dehighlighted(".bars" + d.GEO_ID);
+            });
+    
+    
+    var desc = bars.append("desc")
+        .text('{"stroke": "none", "stroke-width": "0px"}');
     
     //call update chart function
     updateChart(bars,csvData.length,colorScale);
@@ -334,6 +347,29 @@ function highlight(props){
         .style("stroke", "#fc0394")
         .style("stroke-width", "2");
 };
+    
+//function to reset the element style on mouseout
+function dehighlighted(props){
+    var selected = d3.selectAll(props)
+        .style("stroke", function(){
+            return getStyle(this, "stroke")
+        })
+        .style("stroke-width", function(){
+            return getStyle(this, "stroke-width")
+        })
+    
+       function getStyle(element, styleName){
+            var styleText = d3.select(element)
+                .select("desc")
+                .text();
+        
+            var styleObject = JSON.parse(styleText);
+     
+            return styleObject[styleName];
+       };
+    
+    
+}
     
 
 
