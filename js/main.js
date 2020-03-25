@@ -146,17 +146,17 @@ function addCounties(counties,map,path,colorScale){
             .enter()
             .append("path")
             .attr("class", function(d){
-                return "counties" + d.properties.FIPS;
+                return "counties _" + d.properties.FIPS;
             })
             .attr("d", path)
             .style("fill", function(d){
             return colorScale(d.properties[expressed]);
             })
             .on("mouseover", function(d){
-                highlight(".counties" + d.properties.FIPS);
+                highlight("._" + d.properties.FIPS,d.properties);
             })
             .on("mouseout", function(d){
-                dehighlighted(".counties" + d.properties.FIPS);
+                dehighlighted("._" + d.properties.FIPS);
             })
         
         var desc = regions.append("desc")
@@ -220,14 +220,14 @@ function setChart(csvData, colorScale){
             return b[expressed]-a[expressed]
         })
         .attr("class", function(d){
-            return "bars" + d.GEO_ID;
+            return "bars _" + d.GEO_ID;
         })
         .attr("width", chartInnerWidth / csvData.length - 1)
         .on("mouseover", function(d){
-            highlight(".bars" + d.GEO_ID)
+            highlight("._" + d.GEO_ID)
         })
         .on("mouseout", function(d){
-                dehighlighted(".bars" + d.GEO_ID);
+                dehighlighted("._" + d.GEO_ID);
             });
     
     
@@ -340,12 +340,15 @@ function updateChart(bars,n,colorScale){
 };
     
 //function to highlight enumeration units and bars
-function highlight(props){
+function highlight(props,labelProps){
     console.log(props);
     //change stroke
     var selected = d3.selectAll(props)
         .style("stroke", "#fc0394")
         .style("stroke-width", "2");
+    console.log(labelProps);
+    //call set label function
+    setLabel(labelProps);
 };
     
 //function to reset the element style on mouseout
@@ -366,8 +369,30 @@ function dehighlighted(props){
             var styleObject = JSON.parse(styleText);
      
             return styleObject[styleName];
-       };
+       };  
     
+    //below Example 2.4 line 21...remove info label
+    d3.select(".infolabel")
+        .remove();
+};
+    
+//function to create dynamic label
+function setLabel(props){
+    
+    //label content 
+    var labelAttribute = "<h1>" + expressed +
+        "<b>" + " "+ props[expressed] + " % </b></h1>";
+    
+    //create info label div
+    var infolabel = d3.select("body")
+        .append("div")
+        .attr("class", "infolabel")
+        .attr("id", props.GEO_ID + "_label")
+        .html(labelAttribute);
+    
+    var countyName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
     
 }
     
