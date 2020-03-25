@@ -224,7 +224,7 @@ function setChart(csvData, colorScale){
         })
         .attr("width", chartInnerWidth / csvData.length - 1)
         .on("mouseover", function(d){
-            highlight("._" + d.GEO_ID)
+            highlight("._" + d.GEO_ID,d)
         })
         .on("mouseout", function(d){
                 dehighlighted("._" + d.GEO_ID);
@@ -346,7 +346,7 @@ function highlight(props,labelProps){
     var selected = d3.selectAll(props)
         .style("stroke", "#fc0394")
         .style("stroke-width", "2");
-    console.log(labelProps);
+
     //call set label function
     setLabel(labelProps);
 };
@@ -378,7 +378,7 @@ function dehighlighted(props){
     
 //function to create dynamic label
 function setLabel(props){
-    
+    console.log(props);
     //label content 
     var labelAttribute = "<h1>" + expressed +
         "<b>" + " "+ props[expressed] + " % </b></h1>";
