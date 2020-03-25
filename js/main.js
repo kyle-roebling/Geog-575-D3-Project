@@ -156,8 +156,9 @@ function addCounties(counties,map,path,colorScale){
                 highlight("._" + d.properties.FIPS,d.properties);
             })
             .on("mouseout", function(d){
-                dehighlighted("._" + d.properties.FIPS);
+                dehighlighted("._" + d.properties.FIPS)
             })
+            .on("mousemove", moveLabel);
         
         var desc = regions.append("desc")
             .text('{"stroke": "#CCC", "stroke-width": "0.5px"}');
@@ -227,8 +228,10 @@ function setChart(csvData, colorScale){
             highlight("._" + d.GEO_ID,d)
         })
         .on("mouseout", function(d){
-                dehighlighted("._" + d.GEO_ID);
-            });
+                dehighlighted("._" + d.GEO_ID)
+            })
+        .on("mousemove", moveLabel);
+    
     
     
     var desc = bars.append("desc")
@@ -378,7 +381,7 @@ function dehighlighted(props){
     
 //function to create dynamic label
 function setLabel(props){
-    console.log(props);
+
     //label content 
     var labelAttribute = "<h1>" + expressed +
         "<b>" + " "+ props[expressed] + " % </b></h1>";
@@ -394,8 +397,20 @@ function setLabel(props){
         .attr("class", "labelname")
         .html(props.name);
     
-}
+};
+   
+
+//function to move info label with mouse
+function moveLabel(){
+    //use coordinates of mousemove event to set label coordinates
+    console.log(d3.event.clientX)
+    var x = d3.event.clientX + 10,
+        y = d3.event.clientY - 75;
     
+    d3.select(".infolabel")
+        .style("left", x + "px")
+        .style("top", y + "px");
+};  
 
 
 
