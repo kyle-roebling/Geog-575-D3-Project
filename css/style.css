@@ -69,6 +69,7 @@ option{
     background-color: blue;
     border: solid thin #fff;
     padding: 5px 10px;
+    top: -75px;
 }
 
 .infolabel h1 {
