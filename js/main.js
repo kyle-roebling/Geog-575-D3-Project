@@ -26,6 +26,11 @@ var chartWidth = window.innerWidth * 0.55,
     chartInnerWidth = chartWidth - leftPadding - rightPadding,
     chartInnerHeight = chartHeight - topBottomPadding * 2,
     translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+    
+//stacked bar chart dimensions
+var stackMargin = {top: 25, right: 30, bottom: 20, left: 50},
+    stackWidth = window.innerWidth * 0.95 - stackMargin.left - stackMargin.right,
+    stackHeight = 400 - stackMargin.top - stackMargin.bottom;
 
 //create a scale to size bars proportionally to frame and for axis
 var yScale = d3.scaleLinear()
@@ -81,11 +86,14 @@ function setMap(){
             //create map
             addCounties(counties,map,path,colorScale);
         
-            //create chart
+            //create bar chart
             setChart(csvData, colorScale);
         
             //create dropdown
             createDropdown(csvData);
+        
+            //create stacked chart
+            create_stackChart(csvData);
         
         
         
@@ -425,6 +433,73 @@ function moveLabel(){
         .style("left", x + "px")
         .style("top", y + "px");
 };  
+    
+function create_stackChart(data){
+    
+   // append the svg object to the body of the page
+  var svg = d3.select("body")
+    .append("svg")
+    .attr("width", stackWidth + stackMargin.left + stackMargin.right)
+    .attr("height", stackHeight + stackMargin.top + stackMargin.bottom)
+    .append("g")
+    .attr("transform",
+          "translate(" + stackMargin.left + "," + stackMargin.top + ")");
+  
+    // List of subgroups 
+  var subgroups = ['Biden','Sanders','Steyer','Buttigieg','Warren','Klobuchar','Gabbard']
+
+  // List of groups -> I show them on the X axis
+
+  var groups = d3.map(data, function(d){return(d.GEO_ID)}).keys()
+
+  // Add X axis
+  var x = d3.scaleBand()
+      .domain(groups)
+      .range([0, stackWidth])
+      .padding([0.2])
+  svg.append("g")
+    .attr("transform", "translate(0," + stackHeight + ")")
+    //.call(d3.axisBottom(x).tickSizeOuter(0));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ stackHeight, 0 ]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // color palette = one color per subgroup
+  var color = d3.scaleOrdinal()
+    .domain(subgroups)
+    .range(['#0000cc','#00ccff','#99ccff','#99ff99','#3399ff','#00ff99','#6600ff'])
+
+  //stack the data --> stack per subgroup
+  var stackedData = d3.stack()
+    .keys(subgroups)
+    (data)
+  // Show the bars
+  svg.append("g")
+    .selectAll("g")
+    // Enter in the stack data = loop key per key = group per group
+    .data(stackedData)
+    .enter().append("g")
+      .attr("class", function(d){return d.key})
+      .attr("fill", function(d) { return color(d.key); })
+      .selectAll("rect")
+      // enter a second time = loop subgroup per subgroup to add all rectangles
+      .data(function(d) { return d; })
+      .enter().append("rect")
+        .attr("class", function(d) {return + d.data.GEO_ID})
+        .attr("x", function(d) { return x(d.data.GEO_ID); })
+        .attr("y", function(d) { return y(d[1]); })
+        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+        .attr("width",x.bandwidth())
+
+
+
+};
+    
+
 
 
 
