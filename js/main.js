@@ -12,7 +12,7 @@ base.
 (function(){
 
 //pseudo-global variables
-var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","White%","Black%","20_54%","55_85+%","UniversityDegree"];
+var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","WhitePercentage","BlackPercentage","20_54%","55_85+%","UniversityDegree"];
 
 var expressedArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren"];
 var expressed = expressedArray[0]; //initial attribute
@@ -210,7 +210,6 @@ return colorScale;
 //function to create coordinated bar chart
 function setChart(data){
 
-     
   //create a second svg element to hold the bar chart
  var svg = d3.select("body")
     .append("svg")
@@ -272,21 +271,30 @@ function setChart(data){
   }
 
   // Add dots
-  svg.append('g')
+ var circles = svg.append('g')
     .selectAll("dot")
     .data(data)
     .enter()
     .append("circle")
-      .attr("class", function(d) {return "_" + d.GEO_ID})
+      .attr("class", function(d) {return "circles _" + d.GEO_ID})
       .attr("cx", function (d) { return x(d.Biden); } )
       .attr("cy", function (d) { return y(d.BlackPercentage); } )
-      .attr("r", 5)
-      .style("fill", "#69b3a2")
-      .style("opacity", 0.3)
+      .attr("r", 7)
+      .style("fill", "blue")
+      .style("opacity", .5)
       .style("stroke", "white")
-      .on("mouseover", mouseover )
-      .on("mousemove", mousemove )
-      .on("mouseleave", mouseleave )
+      .style("stroke-width", "1px")
+      .on("mouseover", function(d){
+                highlight("._" + d.GEO_ID,d);
+            })
+      .on("mouseout", function(d){
+                dehighlighted("._" + d.GEO_ID)
+            })
+      .on("mousemove", moveLabel);
+    
+  var desc = circles.append("desc")
+        .text('{"stroke": "white", "stroke-width": "1px"}');
+
 
 };
     
@@ -371,7 +379,7 @@ function highlight(props,labelProps){
     //change stroke
     var selected = d3.selectAll(props)
         .style("stroke", "#fc0394")
-        .style("stroke-width", "2");
+        .style("stroke-width", "2.5");
 
     //call set label function
     setLabel(labelProps);
