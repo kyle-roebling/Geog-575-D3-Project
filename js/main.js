@@ -31,6 +31,11 @@ var chartWidth = window.innerWidth * 0.55,
 var stackMargin = {top: 25, right: 30, bottom: 20, left: 50},
     stackWidth = window.innerWidth * 0.95 - stackMargin.left - stackMargin.right,
     stackHeight = 400 - stackMargin.top - stackMargin.bottom;
+    
+// scatter chart dimension
+var scatterMargin = {top: 10, right: 30, bottom: 30, left: 60},
+    scatterWidth = window.innerWidth * 0.45 - scatterMargin.left - scatterMargin.right,
+    scatterHeight = 400 - scatterMargin.top - scatterMargin.bottom;
 
 //create a scale to size bars proportionally to frame and for axis
 var yScale = d3.scaleLinear()
@@ -203,75 +208,85 @@ return colorScale;
     
 
 //function to create coordinated bar chart
-function setChart(csvData, colorScale){
+function setChart(data){
 
      
   //create a second svg element to hold the bar chart
-    var chart = d3.select("body")
-        .append("svg")
-        .attr("width", chartWidth)
-        .attr("height", chartHeight)
-        .attr("class", "chart");
+ var svg = d3.select("body")
+    .append("svg")
+    .attr("width", scatterWidth + scatterMargin.left + scatterMargin.right)
+    .attr("height", scatterHeight + scatterMargin.top + scatterMargin.bottom)
+    .append("g")
+    .attr("transform",
+          "translate(" + scatterMargin.left + "," + scatterMargin.top + ")");
     
-    //create a rectangle for chart background fill
-    var chartBackground = chart.append("rect")
-        .attr("class", "chartBackground")
-        .attr("width", chartInnerWidth)
-        .attr("height", chartInnerHeight)
-        .attr("transform", translate);
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ 0, scatterWidth ]);
+  svg.append("g")
+    .attr("transform", "translate(0," + scatterHeight + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ scatterHeight, 0]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
     
-    //set bars for each province
-    var bars = chart.selectAll(".bars")
-        .data(csvData)
-        .enter()
-        .append("rect")
-        .sort(function(a, b){
-            return b[expressed]-a[expressed]
-        })
-        .attr("class", function(d){
-            return "bars _" + d.GEO_ID;
-        })
-        .attr("width", chartInnerWidth / csvData.length - 1)
-        .on("mouseover", function(d){
-            highlight("._" + d.GEO_ID,d)
-        })
-        .on("mouseout", function(d){
-                dehighlighted("._" + d.GEO_ID)
-            })
-        .on("mousemove", moveLabel);
-    
-    
-    
-    var desc = bars.append("desc")
-        .text('{"stroke": "none", "stroke-width": "0px"}');
-    
-    //call update chart function
-    updateChart(bars,csvData.length,colorScale);
+  // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
+  // Its opacity is set to 0: we don't see it by default.
+  var tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
 
 
-    //below Example 2.8...create a text element for the chart title
-    var chartTitle = chart.append("text")
-        .attr("x", 40)
-        .attr("y", 40)
-        .attr("class", "chartTitle")
-        .text(expressed);
-    
-    //create vertical axis generator
-    var yAxis = d3.axisLeft()
-        .scale(yScale)
 
-    //place axis
-    var axis = chart.append("g")
-        .attr("class", "axis")
-        .attr("transform", translate)
-        .call(yAxis);
+  // A function that change this tooltip when the user hover a point.
+  // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
+  var mouseover = function(d) {
+    tooltip
+      .style("opacity", 1)
+  }
 
-    //create frame for chart border
-    var chartFrame = chart.append("rect")
-        .attr("class", "chartFrame")
-        .attr("width", chartInnerWidth)
-        .attr("height", chartInnerHeight)
-        .attr("transform", translate);
+  var mousemove = function(d) {
+    tooltip
+      .html(d.NAME + ":" + "<br>" + "Biden Vote: " + d.Biden + "<br>" + "Black Perentage: " + d.BlackPercentage)
+      .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  var mouseleave = function(d) {
+    tooltip
+      .transition()
+      .duration(200)
+      .style("opacity", 0)
+  }
+
+  // Add dots
+  svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("class", function(d) {return "_" + d.GEO_ID})
+      .attr("cx", function (d) { return x(d.Biden); } )
+      .attr("cy", function (d) { return y(d.BlackPercentage); } )
+      .attr("r", 5)
+      .style("fill", "#69b3a2")
+      .style("opacity", 0.3)
+      .style("stroke", "white")
+      .on("mouseover", mouseover )
+      .on("mousemove", mousemove )
+      .on("mouseleave", mouseleave )
 
 };
     
