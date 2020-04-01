@@ -14,8 +14,8 @@ base.
 //pseudo-global variables
 var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren","WhitePercentage","BlackPercentage","20_54%","55_85+%","UniversityDegree"];
 
-var expressedArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren"];
-var expressed = expressedArray[0]; //initial attribute
+var candidatesArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren"];
+var candidate = candidatesArray[0]; //initial attribute
     
 //chart frame dimensions
 var chartWidth = window.innerWidth * 0.55,
@@ -54,7 +54,7 @@ function setMap(){
         height = 400;
     
     //create new svg container for the map
-    var map = d3.select("body")
+    var map = d3.select("#map_area")
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
@@ -86,7 +86,7 @@ function setMap(){
             counties = joinData(data);
         
             //create the color scale
-            var colorScale = makeColorScale(data[0]);
+            var colorScale = makeColorScale(csvData);
         
             //create map
             addCounties(counties,map,path,colorScale);
@@ -163,7 +163,7 @@ function addCounties(counties,map,path,colorScale){
             })
             .attr("d", path)
             .style("fill", function(d){
-            return colorScale(d.properties[expressed]);
+            return colorScale(d.properties[candidate]);
             })
             .on("mouseover", function(d){
                 highlight("._" + d.properties.FIPS,d.properties);
@@ -196,7 +196,7 @@ var colorScale = d3.scaleQuantile()
 //build array of all values of the expressed attribute
 var domainArray = [];
 for (var i=0; i<data.length; i++){
-    var val = parseFloat(data[i][expressed]);
+    var val = parseFloat(data[i][candidate]);
     domainArray.push(val);
 };
 
@@ -211,7 +211,7 @@ return colorScale;
 function setChart(data){
 
   //create a second svg element to hold the bar chart
- var svg = d3.select("body")
+ var svg = d3.select("#scatter_chart")
     .append("svg")
     .attr("width", scatterWidth + scatterMargin.left + scatterMargin.right)
     .attr("height", scatterHeight + scatterMargin.top + scatterMargin.bottom)
@@ -234,42 +234,6 @@ function setChart(data){
   svg.append("g")
     .call(d3.axisLeft(y));
     
-  // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
-  // Its opacity is set to 0: we don't see it by default.
-  var tooltip = d3.select("#my_dataviz")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
-    .style("border-radius", "5px")
-    .style("padding", "10px")
-
-
-
-  // A function that change this tooltip when the user hover a point.
-  // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
-  var mouseover = function(d) {
-    tooltip
-      .style("opacity", 1)
-  }
-
-  var mousemove = function(d) {
-    tooltip
-      .html(d.NAME + ":" + "<br>" + "Biden Vote: " + d.Biden + "<br>" + "Black Perentage: " + d.BlackPercentage)
-      .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-      .style("top", (d3.mouse(this)[1]) + "px")
-  }
-
-  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-  var mouseleave = function(d) {
-    tooltip
-      .transition()
-      .duration(200)
-      .style("opacity", 0)
-  }
-
   // Add dots
  var circles = svg.append('g')
     .selectAll("dot")
@@ -301,7 +265,7 @@ function setChart(data){
 //Function to create dropdown menu for attribute selection
 function createDropdown(csvData){
     //add select element
-    var dropdown = d3.select("body")
+    var dropdown = d3.select("#map_area")
         .append("select")
         .attr("class", "dropdown")
         .on("change", function(){
@@ -312,11 +276,11 @@ function createDropdown(csvData){
     var titleOption = dropdown.append("option")
         .attr("class", "titleOption")
         .attr("disabled", "true")
-        .text("Select Attribute")
+        .text("Select Candidate")
     
     //add attribute name options
     var attrOptions = dropdown.selectAll("attrOptions")
-        .data(expressedArray)
+        .data(candidatesArray)
         .enter()
         .append("option")
         .attr("value", function(d) {return d})
@@ -326,7 +290,7 @@ function createDropdown(csvData){
 //dropdown change listener handler
 function changeAttribute(attribute, csvData){
     //change the expressed attribute
-    expressed = attribute;
+    candidate = attribute;
     
     //recreate the color scale
     var colorScale = makeColorScale(csvData);
@@ -336,7 +300,7 @@ function changeAttribute(attribute, csvData){
         .transition()
         .duration(1000)
         .style("fill", function(d){
-            return colorScale(d.properties[expressed]);
+            return colorScale(d.properties[candidate]);
             });
     
     //re-sort, resize, recolor bars
@@ -353,6 +317,8 @@ function changeAttribute(attribute, csvData){
     
     //call update chart function
     updateChart(bars,csvData.length,colorScale);
+    
+    
 };
     
 //Function to update chart data
@@ -361,16 +327,16 @@ function updateChart(bars,n,colorScale){
         return i * (chartInnerWidth / n) + leftPadding;
     })
         .attr("height", function(d){
-            return 390 - yScale(parseFloat(d[expressed]));
+            return 390 - yScale(parseFloat(d[candidate]));
         })
         .attr("y", function(d){
-            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+            return yScale(parseFloat(d[candidate])) + topBottomPadding;
         })
         .style("fill", function(d){
-            return colorScale(d[expressed]);
+            return colorScale(d[candidate]);
             });
        var chartTitle = d3.select(".chartTitle")
-        .text(expressed);
+        .text(candidate);
 };
     
 //function to highlight enumeration units and bars
@@ -414,8 +380,8 @@ function dehighlighted(props){
 function setLabel(props){
 
     //label content 
-    var labelAttribute = "<h1>" + expressed +
-        "<b>" + " "+ props[expressed] + " % </b></h1>";
+    var labelAttribute = "<h1>" + candidate +
+        "<b>" + " "+ props[candidate] + " % </b></h1>";
     
     //create info label div
     var infolabel = d3.select("body")
@@ -460,7 +426,7 @@ function moveLabel(){
 function create_stackChart(data){
     
    // append the svg object to the body of the page
-  var svg = d3.select("body")
+  var svg = d3.select("#stacked_chart")
     .append("svg")
     .attr("width", stackWidth + stackMargin.left + stackMargin.right)
     .attr("height", stackHeight + stackMargin.top + stackMargin.bottom)

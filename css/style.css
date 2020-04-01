@@ -1,3 +1,14 @@
+#map_area{
+    width 50%;
+    float: left;
+}
+
+#scatter_chart{
+    width 50%;
+    float: right;
+    background: "gray";
+}
+
 .map {
     border: medium solid #999;
 }
