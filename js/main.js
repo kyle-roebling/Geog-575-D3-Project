@@ -16,6 +16,9 @@ var attrArray = ["GEO_ID","NAME","Biden","Buttigieg","Gabbard","Klobuchar","Sand
 
 var candidatesArray = ["Biden","Buttigieg","Gabbard","Klobuchar","Sanders","Steyer","Warren"];
 var candidate = candidatesArray[0]; //initial attribute
+console.log(candidate);
+var demoArray = ["WhitePercentage","BlackPercentage","20_54Percentage","55_85+Percentage","UniversityDegree"]
+var demo = demoArray[0];
     
 //chart frame dimensions
 var chartWidth = window.innerWidth * 0.55,
@@ -91,11 +94,14 @@ function setMap(){
             //create map
             addCounties(counties,map,path,colorScale);
         
-            //create bar chart
+            //create scatter chart
             setChart(csvData, colorScale);
         
-            //create dropdown
-            createDropdown(csvData);
+            //create dropdown for map
+            createDropdownMap(csvData);
+        
+            //create dropdown for scatter plot
+            createDropdownChart(csvData);
         
             //create stacked chart
             create_stackChart(csvData);
@@ -207,9 +213,9 @@ return colorScale;
 };
     
 
-//function to create coordinated bar chart
+//function to create scatter chart
 function setChart(data){
-
+  console.log(candidate);
   //create a second svg element to hold the bar chart
  var svg = d3.select("#scatter_chart")
     .append("svg")
@@ -241,8 +247,8 @@ function setChart(data){
     .enter()
     .append("circle")
       .attr("class", function(d) {return "circles _" + d.GEO_ID})
-      .attr("cx", function (d) { return x(d.Biden); } )
-      .attr("cy", function (d) { return y(d.BlackPercentage); } )
+      .attr("cx", function (d) { return x(d[demo]); } )
+      .attr("cy", function (d) { return y(d[candidate]); } )
       .attr("r", 7)
       .style("fill", "blue")
       .style("opacity", .5)
@@ -262,12 +268,12 @@ function setChart(data){
 
 };
     
-//Function to create dropdown menu for attribute selection
-function createDropdown(csvData){
+//Function to create dropdown menu for map 
+function createDropdownMap(csvData){
     //add select element
     var dropdown = d3.select("#map_area")
         .append("select")
-        .attr("class", "dropdown")
+        .attr("class", "dropdownMap")
         .on("change", function(){
             changeAttribute(this.value, csvData)
         });
@@ -287,10 +293,37 @@ function createDropdown(csvData){
         .text(function(d){return d});
 }
     
+function createDropdownChart(csvData){
+    //add select element
+    var dropdown = d3.select("#scatter_chart")
+        .append("select")
+        .attr("class", "dropdownChart")
+        .on("change", function(){
+            changeAttribute(this.value, csvData)
+        });
+    
+    //add initial option
+    var titleOption = dropdown.append("option")
+        .attr("class", "titleOption")
+        .attr("disabled", "true")
+        .text("Select Demographic")
+    
+    //add attribute name options
+    var attrOptions = dropdown.selectAll("attrOptions")
+        .data(demoArray)
+        .enter()
+        .append("option")
+        .attr("value", function(d) {return d})
+        .text(function(d){return d});
+    
+    
+}
+    
 //dropdown change listener handler
 function changeAttribute(attribute, csvData){
     //change the expressed attribute
     candidate = attribute;
+    demo = attribute
     
     //recreate the color scale
     var colorScale = makeColorScale(csvData);
@@ -304,11 +337,7 @@ function changeAttribute(attribute, csvData){
             });
     
     //re-sort, resize, recolor bars
-    var bars = d3.selectAll(".bars")
-        //re-sort bars
-        .sort(function(a,b){
-             return b[expressed] - a[expressed];
-        })
+    var circles = d3.selectAll(".circles")
         .transition()
         .delay(function(d,i){
             return i * 20
@@ -316,27 +345,16 @@ function changeAttribute(attribute, csvData){
         .duration(500);
     
     //call update chart function
-    updateChart(bars,csvData.length,colorScale);
+    updateChart(circles);
     
     
 };
     
 //Function to update chart data
-function updateChart(bars,n,colorScale){
-    bars.attr("x", function(d, i){
-        return i * (chartInnerWidth / n) + leftPadding;
-    })
-        .attr("height", function(d){
-            return 390 - yScale(parseFloat(d[candidate]));
-        })
-        .attr("y", function(d){
-            return yScale(parseFloat(d[candidate])) + topBottomPadding;
-        })
-        .style("fill", function(d){
-            return colorScale(d[candidate]);
-            });
-       var chartTitle = d3.select(".chartTitle")
-        .text(candidate);
+function updateChart(circles){
+    console.log(circles);
+    circles.attr("cx", function (d) { return x(d[candidate]); } )
+            .attr("cy", function (d) { return y(d[demo]); } )
 };
     
 //function to highlight enumeration units and bars
