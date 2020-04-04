@@ -230,14 +230,33 @@ function setChart(data){
     .attr("transform",
           "translate(" + scatterMargin.left + "," + scatterMargin.top + ")");
     
-
+  // add x axis
   svg.append("g")
     .attr("transform", "translate(0," + scatterHeight + ")")
     .call(d3.axisBottom(x));
+    
+ // text label for the x axis
+  svg.append("text") 
+      .attr("class", "x_axis")
+      .attr("transform",
+            "translate(" + (scatterWidth/2) + " ," + 
+                           (scatterHeight + scatterMargin.top + 20) + ")")
+      .style("text-anchor", "middle")
+      .text(demo);
 
-
+  // add y axis
   svg.append("g")
     .call(d3.axisLeft(y));
+    
+// text label for the y axis
+  svg.append("text")
+      .attr("class", "y_axis")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - scatterMargin.left)
+      .attr("x",0 - (scatterHeight / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text(candidate);      
     
   // Add dots
  var circles = svg.append('g')
@@ -298,7 +317,7 @@ function createDropdownChart(csvData){
         .append("select")
         .attr("class", "dropdownChart")
         .on("change", function(){
-            updateChart(this.value, csvData)
+            updateChart(this.value)
         });
     
     //add initial option
@@ -341,8 +360,14 @@ function changeAttributeMap(attribute, csvData){
 //Function to update chart data
 function updateChart(attribute){
     demo = attribute
+    
+    xaxis = d3.select("text.x_axis")
+    xaxis.text(demo)
+    
+    yaxis = d3.select("text.y_axis")
+    yaxis.text(candidate)
+    
     circles = d3.selectAll("circle")
-    console.log(circles)
     circles.attr("cx", function (d) { return x(d[demo]); } )
             .attr("cy", function (d) { return y(d[candidate]); } )
 };
@@ -386,10 +411,10 @@ function dehighlighted(props){
     
 //function to create dynamic label
 function setLabel(props){
-
+    console.log(props.NAME);
     //label content 
-    var labelAttribute = "<h1>" + candidate +
-        "<b>" + " "+ props[candidate] + " % </b></h1>";
+    var labelAttribute = "<h2>" + props.NAME + "<br>" + candidate +
+        "<b>" + " "+ props[candidate] + " % </b></h2>";
     
     //create info label div
     var infolabel = d3.select("body")
