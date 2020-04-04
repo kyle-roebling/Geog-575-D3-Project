@@ -40,11 +40,16 @@ var scatterMargin = {top: 10, right: 30, bottom: 30, left: 60},
     scatterWidth = window.innerWidth * 0.45 - scatterMargin.left - scatterMargin.right,
     scatterHeight = 400 - scatterMargin.top - scatterMargin.bottom;
 
-//create a scale to size bars proportionally to frame and for axis
-var yScale = d3.scaleLinear()
-    .range([390, 0])
-    .domain([0, 100]);
-
+// Add X axis for scatter chart
+var x = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ 0, scatterWidth ]); 
+    
+// Add Y axis for scatter chart
+var y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ scatterHeight, 0]);
+    
 
 //begin script when window loads
 window.onload = setMap();
@@ -225,18 +230,12 @@ function setChart(data){
     .attr("transform",
           "translate(" + scatterMargin.left + "," + scatterMargin.top + ")");
     
-  // Add X axis
-  var x = d3.scaleLinear()
-    .domain([0, 100])
-    .range([ 0, scatterWidth ]);
+
   svg.append("g")
     .attr("transform", "translate(0," + scatterHeight + ")")
     .call(d3.axisBottom(x));
 
-  // Add Y axis
-  var y = d3.scaleLinear()
-    .domain([0, 100])
-    .range([ scatterHeight, 0]);
+
   svg.append("g")
     .call(d3.axisLeft(y));
     
@@ -275,7 +274,7 @@ function createDropdownMap(csvData){
         .append("select")
         .attr("class", "dropdownMap")
         .on("change", function(){
-            changeAttribute(this.value, csvData)
+            changeAttributeMap(this.value, csvData)
         });
     
     //add initial option
@@ -299,7 +298,7 @@ function createDropdownChart(csvData){
         .append("select")
         .attr("class", "dropdownChart")
         .on("change", function(){
-            changeAttribute(this.value, csvData)
+            updateChart(this.value, csvData)
         });
     
     //add initial option
@@ -320,11 +319,10 @@ function createDropdownChart(csvData){
 }
     
 //dropdown change listener handler
-function changeAttribute(attribute, csvData){
+function changeAttributeMap(attribute, csvData){
     //change the expressed attribute
     candidate = attribute;
-    demo = attribute
-    
+
     //recreate the color scale
     var colorScale = makeColorScale(csvData);
     
@@ -336,25 +334,17 @@ function changeAttribute(attribute, csvData){
             return colorScale(d.properties[candidate]);
             });
     
-    //re-sort, resize, recolor bars
-    var circles = d3.selectAll(".circles")
-        .transition()
-        .delay(function(d,i){
-            return i * 20
-        })
-        .duration(500);
-    
-    //call update chart function
-    updateChart(circles);
-    
-    
+    updateChart(demo);
+     
 };
     
 //Function to update chart data
-function updateChart(circles){
-    console.log(circles);
-    circles.attr("cx", function (d) { return x(d[candidate]); } )
-            .attr("cy", function (d) { return y(d[demo]); } )
+function updateChart(attribute){
+    demo = attribute
+    circles = d3.selectAll("circle")
+    console.log(circles)
+    circles.attr("cx", function (d) { return x(d[demo]); } )
+            .attr("cy", function (d) { return y(d[candidate]); } )
 };
     
 //function to highlight enumeration units and bars
