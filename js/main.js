@@ -33,7 +33,7 @@ var chartWidth = window.innerWidth * 0.55,
 //stacked bar chart dimensions
 var stackMargin = {top: 25, right: 30, bottom: 20, left: 50},
     stackWidth = window.innerWidth * 0.95 - stackMargin.left - stackMargin.right,
-    stackHeight = 400 - stackMargin.top - stackMargin.bottom;
+    stackHeight = 300 - stackMargin.top - stackMargin.bottom;
     
 // scatter chart dimension
 var scatterMargin = {top: 10, right: 30, bottom: 30, left: 60},
@@ -374,7 +374,7 @@ function updateChart(attribute){
     
 //function to highlight enumeration units and bars
 function highlight(props,labelProps){
-    console.log(props);
+    //console.log(props);
     //change stroke
     var selected = d3.selectAll(props)
         .style("stroke", "#fc0394")
@@ -500,7 +500,7 @@ function create_stackChart(data){
     .keys(subgroups)
     (data)
   // Show the bars
-  svg.append("g")
+bars = svg.append("g")
     .selectAll("g")
     // Enter in the stack data = loop key per key = group per group
     .data(stackedData)
@@ -511,12 +511,23 @@ function create_stackChart(data){
       // enter a second time = loop subgroup per subgroup to add all rectangles
       .data(function(d) { return d; })
       .enter().append("rect")
-        .attr("class", function(d) {return + d.data.GEO_ID})
+        .attr("class", function(d) {return  "_" + d.data.GEO_ID})
         .attr("x", function(d) { return x(d.data.GEO_ID); })
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return y(d[0]) - y(d[1]); })
         .attr("width",x.bandwidth())
-
+        .style("stroke", "white")
+        .style("stroke-width", "1px")
+        .on("mouseover", function(d){
+                highlight("._" + d.data.GEO_ID,d.data);
+            })
+        .on("mouseout", function(d){
+                dehighlighted("._" + d.data.GEO_ID)
+            })
+        .on("mousemove", moveLabel);
+    
+     var desc = bars.append("desc")
+        .text('{"stroke": "white", "stroke-width": "1px"}');
 
 
 };
