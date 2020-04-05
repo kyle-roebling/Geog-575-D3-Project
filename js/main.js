@@ -297,13 +297,15 @@ function setChart(data){
     
 //Function to create dropdown menu for map 
 function createDropdownMap(csvData){
+    
     //add select element
-    var dropdown = d3.select("#map_area")
+    var dropdown = d3.select("#map_dropdown")
         .append("select")
         .attr("class", "dropdownMap")
         .on("change", function(){
             changeAttributeMap(this.value, csvData)
         });
+    
     
     //add initial option
     var titleOption = dropdown.append("option")
@@ -322,7 +324,7 @@ function createDropdownMap(csvData){
     
 function createDropdownChart(csvData){
     //add select element
-    var dropdown = d3.select("#scatter_chart")
+    var dropdown = d3.select("#chart_dropdown")
         .append("select")
         .attr("class", "dropdownChart")
         .on("change", function(){
