@@ -9,6 +9,21 @@
     background: "gray";
 }
 
+#stacked_chart{
+    width 70%;
+    float: left;
+}
+
+#stacked_legend{
+    width 20%;
+}
+
+svg#legend{
+    height: 400 px;
+    width: 350 px;
+    
+}
+
 .map {
     border: medium solid #999;
 }
@@ -102,3 +117,4 @@ option{
     display: inline-block;
     line-height: 1em;
 }
+

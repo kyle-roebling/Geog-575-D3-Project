@@ -32,7 +32,7 @@ var chartWidth = window.innerWidth * 0.55,
     
 //stacked bar chart dimensions
 var stackMargin = {top: 25, right: 30, bottom: 20, left: 50},
-    stackWidth = window.innerWidth * 0.95 - stackMargin.left - stackMargin.right,
+    stackWidth = window.innerWidth * 0.75 - stackMargin.left - stackMargin.right,
     stackHeight = 300 - stackMargin.top - stackMargin.bottom;
     
 // scatter chart dimension
@@ -49,6 +49,12 @@ var x = d3.scaleLinear()
 var y = d3.scaleLinear()
     .domain([0, 100])
     .range([ scatterHeight, 0]);
+    
+// color scale for stacked chart
+// color palette = one color per subgroup
+ var color = d3.scaleOrdinal()
+    .domain(candidatesArray)
+    .range(['#0000cc','#00ccff','#99ccff','#99ff99','#3399ff','#00ff99','#6600ff'])
     
 
 //begin script when window loads
@@ -110,6 +116,9 @@ function setMap(){
         
             //create stacked chart
             create_stackChart(csvData);
+            
+            //create stack chart legend
+            createStack_legend()
         
         
         
@@ -490,11 +499,6 @@ function create_stackChart(data){
   svg.append("g")
     .call(d3.axisLeft(y));
 
-  // color palette = one color per subgroup
-  var color = d3.scaleOrdinal()
-    .domain(subgroups)
-    .range(['#0000cc','#00ccff','#99ccff','#99ff99','#3399ff','#00ff99','#6600ff'])
-
   //stack the data --> stack per subgroup
   var stackedData = d3.stack()
     .keys(subgroups)
@@ -531,15 +535,37 @@ bars = svg.append("g")
 
 
 };
-    
+
+// Create stack chart legend
+function createStack_legend(){
+    // select the svg area
+    var SVG = d3.select("#legend")
 
 
+    // Add one dot in the legend for each name.
+    var size = 20
+    SVG.selectAll("mydots")
+      .data(candidatesArray)
+      .enter()
+      .append("rect")
+        .attr("x", 100)
+        .attr("y", function(d,i){ return 100 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("width", size)
+        .attr("height", size)
+        .style("fill", function(d){ return color(d)})
 
-
-
+    // Add one dot in the legend for each name.
+    SVG.selectAll("mylabels")
+      .data(candidatesArray)
+      .enter()
+      .append("text")
+        .attr("x", 100 + size*1.2)
+        .attr("y", function(d,i){ return 100 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+        .style("fill", function(d){ return color(d)})
+        .text(function(d){ return d})
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle")   
+}
     
-    
-    
-    
-    
+  
 })(); //last line of main.js
